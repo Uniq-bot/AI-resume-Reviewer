@@ -16,8 +16,8 @@ if (!GEMINI_API_KEY) {
 // Use the correct REST endpoint for generateContent
 const GEMINI_ENDPOINT = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent`;
 
-app.post("/api/ai-review", async (req, res) => {
-  
+app.post("/api/ai-reviewer", async (req, res) => {
+
   const { text } = req.body;
   if (!text) {
     return res.status(400).json({ error: "Text is required" });
