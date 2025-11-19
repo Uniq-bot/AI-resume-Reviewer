@@ -1,77 +1,49 @@
 import express from "express";
+import cors from "cors";
 import dotenv from "dotenv";
-import fetch from "node-fetch";
+import ModelClient, { isUnexpected } from "@azure-rest/ai-inference";
+import { AzureKeyCredential } from "@azure/core-auth";
 
 dotenv.config();
 
 const app = express();
+app.use(cors());
 app.use(express.json());
 
-const GEMINI_API_KEY = process.env.GEMINI_KEY;
-if (!GEMINI_API_KEY) {
-  console.error("Error: GEMINI_KEY not set in .env");
-  process.exit(1);
-}
+const token = "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";
+const endpoint = "https://models.github.ai/inference";
+const model = "gpt-3.5-turbo"; // or your deployment name
 
-// Use the correct REST endpoint for generateContent
-const GEMINI_ENDPOINT = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent`;
-
-app.post("/api/ai-reviewer", async (req, res) => {
-
-  const { text } = req.body;
-  if (!text) {
-    return res.status(400).json({ error: "Text is required" });
-  }
-
+const client = ModelClient(endpoint, new AzureKeyCredential(token));
+app.post("/api/generate", async (req, res) => {
   try {
-    const body = {
-      contents: [
-        {
-          parts: [
-            { text: text }
-          ]
-        }
-      ],
-      // Optional: you can configure generation parameters
-      generationConfig: {
-        temperature: 0.7,
-        // maxOutputTokens, stopSequences, etc.
-      }
-    };
+    const { prompt } = req.body;
+    if (!prompt) return res.status(400).json({ error: "Prompt is required." });
 
-    const response = await fetch(GEMINI_ENDPOINT, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-goog-api-key": GEMINI_API_KEY,  // Use this header for API key auth :contentReference[oaicite:1]{index=1}
-      },
-      body: JSON.stringify(body),
+    const response = await client.path("/chat/completions").post({
+      body: {
+        messages: [
+          { role: "system", content: "" },
+          { role: "user", content: prompt }
+        ],
+        model: model
+      }
     });
 
-    const textResponse = await response.text();
-    // Debug: what did the API actually return?
-    console.log("Raw response:", textResponse);
+    if (isUnexpected(response)) throw response.body.error;
 
-    // Try to parse JSON — if not JSON, throw error
-    let data;
-    try {
-      data = JSON.parse(textResponse);
-    } catch (parseErr) {
-      console.error("Failed to parse JSON:", parseErr);
-      return res.status(500).json({ error: "Invalid JSON response from Gemini API" });
-    }
+    const choice = response.body.choices[0];
+    const text = choice.content.map(c => c.text).join("\n");
 
-    // Gemini returns an array of candidates
-    const candidate = data.candidates?.[0];
-    const content = candidate?.content;
-    const parts = content?.parts;
-    const resultText = parts?.map(p => p.text).join("") ?? "";
+    res.json({ response: text });
 
-    res.json({ result: resultText });
-  } catch (err) {
-    console.error("Error calling Gemini API:", err);
-    res.status(500).json({ error: "Something went wrong calling Gemini API" });
+  } catch (error) {
+    console.error("Azure OpenAI Error:", error);
+    res.status(500).json({ error: error.message || JSON.stringify(error) });
   }
 });
 
-app.listen(5000, () => console.log("Server running on port 5000"));
+
+
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
