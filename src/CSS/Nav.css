@@ -1,0 +1,24 @@
+
+
+ul > li {
+    position: relative;
+    display: inline-block; /* optional but looks better */
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+ul > li::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    height: 2px;
+    width: 0%;
+    background: #4f46e5;
+    transform: translateX(-50%);
+    transition: width 0.3s ease;
+}
+
+ul > li:hover::after {
+    width: 100%;
+}
