@@ -1,4 +1,5 @@
 import React from "react";
+import FileDropZone from "../fileDrop/FileDrop";
 
 const Hero = () => {
   return (
@@ -27,18 +28,9 @@ const Hero = () => {
         fix errors, and stand out from the competition with actionable insights.
       </p>
 
-      {/* Upload Box */}
-      <div className="border-2 border-dashed border-[#7C7C7C] mt-10 rounded-[20px] w-full max-w-2xl h-[180px] 
-                      flex flex-col items-center justify-center gap-2 px-4">
-        <p className="text-xl font-medium">Drop your resume here</p>
-
-        <p className="text-[#7C7C7C] text-sm">or click to browse files</p>
-
-        <button className="bg-gradient-to-r from-[#2563EB] to-[#311585] text-white text-sm px-5 py-2 rounded-[12px]">
-          Choose File
-        </button>
-
-        <p className="text-[#7C7C7C] text-xs">Supports PDF, DOCX • Max 5MB</p>
+      {/* Upload Box with FileDropZone */}
+      <div className="mt-10 w-full max-w-2xl">
+        <FileDropZone />
       </div>
 
       {/* Stats */}

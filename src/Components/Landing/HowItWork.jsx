@@ -22,32 +22,49 @@ const HowItWork = () => {
   ];
 
   return (
-    <div className="w-full min-h-100 bg-gray-900 flex flex-col items-center py-16">
+    <div className="w-full bg-gray-900 flex flex-col items-center py-14 px-4">
       {/* Heading */}
-      <div className="flex flex-col items-center">
-        <h3 className="px-5 select-none font-semibold py-3 bg-blue-500/50 rounded-full flex items-center justify-center gap-2 text-white">
+      <div className="flex flex-col items-center text-center">
+        <h3 className="px-5 select-none font-semibold py-2 bg-blue-500/50 rounded-full flex items-center justify-center gap-2 text-white text-sm md:text-base">
           <WandSparkles size={15} /> Simple Process
         </h3>
-        <h1 className="text-5xl mt-6 font-mono text-white">Analyze Your Resume</h1>
+
+        <h1 className="text-3xl md:text-5xl mt-6 font-mono text-white">
+          Analyze Your Resume
+        </h1>
       </div>
 
-      {/* Content */}
-      <div className="flex items-center bg-white w-4/5 mt-12 rounded-xl overflow-hidden shadow-xl">
-        <div className="w-1/2 h-100">
-          <img src={hero} alt="hero section" className="w-full h-full object-cover" />
+      {/* Content Wrapper */}
+      <div className="flex flex-col md:flex-row  pt-5  items-center bg-white w-full md:w-4/5 mt-10 rounded-xl shadow-xl">
+
+        {/* Image Section */}
+        <div className="w-full md:w-1/2 h-60 md:h-100">
+          <img
+            src={hero}
+            alt="hero section"
+            className="w-full h-full object-cover"
+          />
         </div>
 
-        <div className="flex flex-col w-1/2 p-10 gap-10 justify-center">
+        {/* Steps Section */}
+        <div className="flex flex-col items-center md:items-baseline  w-full md:w-1/2 p-6 md:p-10 gap-8 md:gap-10 justify-center">
           {steps.map((item) => (
-            <div key={item.step} className="flex flex-col">
-              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center text-white text-xl font-bold">
+            <div key={item.step} className="flex w-full items-center text-center md:items-baseline md:text-left flex-col">
+              <div className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center text-white text-lg md:text-xl font-bold">
                 {String(item.step).padStart(2, "0")}
               </div>
-              <h2 className="text-2xl font-semibold mt-3">{item.title}</h2>
-              <p className="text-gray-600">{item.description}</p>
+
+              <h2 className="text-xl md:text-2xl font-semibold mt-3">
+                {item.title}
+              </h2>
+
+              <p className="text-gray-600 text-sm md:text-base">
+                {item.description}
+              </p>
             </div>
           ))}
         </div>
+
       </div>
     </div>
   );
